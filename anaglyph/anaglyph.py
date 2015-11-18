@@ -20,6 +20,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 import optparse
+import os
 from PIL import Image, ImageSequence
 from images2gif import writeGif
 
@@ -114,28 +115,71 @@ def parse_arguments():
     if len(args) != 3:
         parser.error('wrong number of arguments')
 
-    leftImage = Image.open(args[0])
-    pixelMap = leftImage.load()
-    rightImage = Image.open(args[1])
-    if leftImage.size != rightImage.size:
-        parser.error('left and right images must have the same size')
+    # args[0] : leftimages directory
+    # args[1] : rightimages directory
+
+    leftImages = []
+    rightImages = []
+    pixelMaps = []
+
+    for left in sorted(os.listdir(args[0])):
+        leftImage = Image.open("./" + args[0] + "/" + left)
+        leftImages.append(leftImage)
+        pixelMaps.append(leftImage.load())
+
+    for right in sorted(os.listdir(args[1])):
+        rightImages.append(Image.open("./" + args[1] + "/"+right));
+
+    # leftImage = Image.open(args[0])
+    # pixelMap = leftImage.load()
+    # rightImage = Image.open(args[1])
+
+    if len(leftImages) != len(rightImages):
+        parser.error('left and right directories have different number of files')
+    
+    for i in xrange(len(leftImages)):
+        if leftImages[i].size != rightImages[i].size:
+            parser.error('left and right images must have the same size')
+
+    # if leftImage.size != rightImage.size:
+    #     parser.error('left and right images must have the same size')
+
     if options.size > 0:
-        width, height = leftImage.size
-        leftImage = leftImage.resize((options.size, options.size * height / width), Image.ANTIALIAS)
-        rightImage = rightImage.resize((options.size, options.size * height / width), Image.ANTIALIAS)
-    return options, leftImage, rightImage, args[2]
+        # width, height = leftImage.size
+        width, height = leftImages[0].size
+        # leftImage = leftImage.resize((options.size, options.size * height / width), Image.ANTIALIAS)
+        # rightImage = rightImage.resize((options.size, options.size * height / width), Image.ANTIALIAS)
+        for i in xrange(len(leftImages)):
+            leftImages[i] = leftImages[i].resize((options.size, options.size * height / width), Image.ANTIALIAS)
+            rightImages[i] = rightImages[i].resize((options.size, options.size * height / width), Image.ANTIALIAS)
+    # return options, leftImage, rightImage, args[2]
+    return options, leftImages, rightImages, args[2]
 
 def main():
-    options, leftImage, rightImage, stereoPath = parse_arguments()
+    # options, leftImage, rightImage, stereoPath = parse_arguments()
+    options, leftImages, rightImages, stereoPath = parse_arguments()
 
-    if options.type == 'anaglyph':
-        make_anaglyph(leftImage, rightImage, options.color, stereoPath)
-    elif options.type == 'parallel':
-        make_stereopair(leftImage, rightImage, options.color, stereoPath)
-    elif options.type == 'crossed':
-        make_stereopair(rightImage, leftImage, options.color, stereoPath)
-    elif options.type == 'wiggle':
-        make_wiggle3d(leftImage, rightImage, options.color, stereoPath)
+    for i in xrange(len(leftImages)):
+        outputPath = stereoPath+str(i)+".jpg";
+        leftImage = leftImages[i]
+        rightImage = rightImages[i]
+        if options.type == 'anaglyph':
+            make_anaglyph(leftImage, rightImage, options.color, outputPath)
+        elif options.type == 'parallel':
+            make_stereopair(leftImage, rightImage, options.color, outputPath)
+        elif options.type == 'crossed':
+            make_stereopair(rightImage, leftImage, options.color, outputPath)
+        elif options.type == 'wiggle':
+            make_wiggle3d(leftImage, rightImage, options.color, outputPath)
+
+    # if options.type == 'anaglyph':
+    #     make_anaglyph(leftImage, rightImage, options.color, stereoPath)
+    # elif options.type == 'parallel':
+    #     make_stereopair(leftImage, rightImage, options.color, stereoPath)
+    # elif options.type == 'crossed':
+    #     make_stereopair(rightImage, leftImage, options.color, stereoPath)
+    # elif options.type == 'wiggle':
+    #     make_wiggle3d(leftImage, rightImage, options.color, stereoPath)
 
 if __name__ == '__main__':
     main()
