@@ -34,7 +34,7 @@ def processImage(infile):
 
         if dispose is None:
             prev.paste(frame, bbox, frame.convert('RGBA'))
-            prev.save(infile[:-4]+'%02d.png' % i)
+            #prev.save(infile[:-4]+'%02d.png' % i)
             prev_dispose = False
             images.append(prev)
         else:
@@ -42,7 +42,7 @@ def processImage(infile):
                 prev = Image.new('RGBA', img.size, (0, 0, 0, 0))
             out = prev.copy()
             out.paste(frame, bbox, frame.convert('RGBA'))
-            out.save(infile[:-4]+'%02d.png' % i)
+            #out.save(infile[:-4]+'%02d.png' % i)
             images.append(out)
 
 processImage(infile)
@@ -60,6 +60,9 @@ def createWheelIm(frames, imwidth, imheight):
         angle = x * 360.0/numFrames
         copyAtAngle(out, images[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS), angle)
     #Add a large square in the middle for easy centering
+
+    img = Image.new("RGBA", (dpi, dpi), "black")
+    out.paste(img, (center[0] - dpi/2, center[1]-dpi/2))
     out.save(infile[:-4]+'_output.png')
 
 def copyAtAngle(out, frame, angle):
@@ -83,16 +86,6 @@ def copyAtAngle(out, frame, angle):
 
     #print center, point, imwidth, imheight, dim
     #print rotatePoint(center, point, 90, int(out.size[0]-dim), int(out.size[1]-dim))
-def createMask(output, frame, coord, angle):
-    alpha = frame.split()[-1]
-    outalpha = output.split()[-1]
-    outalpha.save(infile[:-4]+'_maskOutput%02d.png'% angle)
-    alpha = alpha.point(lambda i: min(i * 255, 255))
-    imwidth, imheight = output.size
-    out=Image.new("L", (imwidth, imheight))
-    out.paste(alpha, coord)
-    out.save(infile[:-4]+'_mask%02d.png'% angle)
-    return out
 
 
 '''
