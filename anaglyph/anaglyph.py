@@ -123,12 +123,16 @@ def parse_arguments():
     pixelMaps = []
 
     for left in sorted(os.listdir(args[0])):
-        leftImage = Image.open("./" + args[0] + "/" + left)
-        leftImages.append(leftImage)
-        pixelMaps.append(leftImage.load())
+        if not left.startswith('.'):
+            print left
+
+            leftImage = Image.open("./" + args[0] + "/" + left)
+            leftImages.append(leftImage)
+            pixelMaps.append(leftImage.load())
 
     for right in sorted(os.listdir(args[1])):
-        rightImages.append(Image.open("./" + args[1] + "/"+right));
+        if not right.startswith('.'):
+            rightImages.append(Image.open("./" + args[1] + "/"+right));
 
     # leftImage = Image.open(args[0])
     # pixelMap = leftImage.load()
