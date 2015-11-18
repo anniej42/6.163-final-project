@@ -59,6 +59,7 @@ def createWheelIm(frames, imwidth, imheight):
     for x in xrange(numFrames):
         angle = x * 360.0/numFrames
         copyAtAngle(out, images[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS), angle)
+    #Add a large square in the middle for easy centering
     out.save(infile[:-4]+'_output.png')
 
 def copyAtAngle(out, frame, angle):
@@ -110,8 +111,9 @@ def rotatePoint(centerPoint,point,angle):
 
 #number = num frames, everything else in pixels or whatever, same units
 def getMaxSizePerSector(radius, width, height, number):
+    dim = math.sqrt(width**2 + height**2)
     angle = math.pi/number
-    radius = math.cos(angle)*radius
-    ans = (2 * math.tan(angle) * radius / width) / (1 + (2*math.tan(angle)*height/width))
+    opposite = math.cos(angle)*radius
+    ans = (2 * math.tan(angle) * opposite / dim) / (1 + (2*math.tan(angle)*dim/dim))
     return ans
 createWheelIm(images, imwidth, imheight)
