@@ -9,8 +9,8 @@ diameter = int(sys.argv[2]) if len(sys.argv) >= 3 else 8
 dpi = 600
 imwidth = diameter * dpi
 imheight = diameter * dpi
-images =[]
 def processImage(infile):
+    images =[]
     try:
         img = Image.open(infile)
     except IOError:
@@ -36,16 +36,18 @@ def processImage(infile):
             prev.paste(frame, bbox, frame.convert('RGBA'))
             #prev.save(infile[:-4]+'%02d.png' % i)
             prev_dispose = False
-            images.append(prev)
+            images.append(prev.copy())
         else:
             if prev_dispose:
                 prev = Image.new('RGBA', img.size, (0, 0, 0, 0))
             out = prev.copy()
             out.paste(frame, bbox, frame.convert('RGBA'))
             #out.save(infile[:-4]+'%02d.png' % i)
-            images.append(out)
-
-processImage(infile)
+            images.append(out.copy())
+    # for x in xrange(len(images)):
+    #     img = images[x]
+    #     img.save('debug_%02d.png' % x)
+    return images
 
 def createWheelIm(frames, imwidth, imheight):
     out=Image.new("RGBA", (imwidth, imheight))
@@ -58,7 +60,8 @@ def createWheelIm(frames, imwidth, imheight):
     frameH *= rescaleFactor
     for x in xrange(numFrames):
         angle = x * 360.0/numFrames
-        copyAtAngle(out, images[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS), angle)
+        tempIm =frames[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS)
+        copyAtAngle(out, tempIm, angle)
     #Add a large square in the middle for easy centering
 
     img = Image.new("RGBA", (dpi, dpi), "black")
@@ -109,4 +112,4 @@ def getMaxSizePerSector(radius, width, height, number):
     opposite = math.cos(angle)*radius
     ans = (2 * math.tan(angle) * opposite / dim) / (1 + (2*math.tan(angle)*dim/dim))
     return ans
-createWheelIm(images, imwidth, imheight)
+createWheelIm(processImage(infile), imwidth, imheight)
