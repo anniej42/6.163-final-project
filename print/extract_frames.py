@@ -9,6 +9,8 @@ diameter = int(sys.argv[2]) if len(sys.argv) >= 3 else 8
 dpi = 600
 imwidth = diameter * dpi
 imheight = diameter * dpi
+centerCircle = Image.open("circle.png")
+centerCircle = centerCircle.resize((dpi, dpi), Image.ANTIALIAS)
 def processImage(infile):
     images =[]
     try:
@@ -64,8 +66,7 @@ def createWheelIm(frames, imwidth, imheight):
         copyAtAngle(out, tempIm, angle)
     #Add a large square in the middle for easy centering
 
-    img = Image.new("RGBA", (dpi, dpi), "black")
-    out.paste(img, (center[0] - dpi/2, center[1]-dpi/2))
+    out.paste(centerCircle, (center[0] - dpi/2, center[1]-dpi/2))
     out.save(infile[:-4]+'_output.png')
 
 def copyAtAngle(out, frame, angle):
