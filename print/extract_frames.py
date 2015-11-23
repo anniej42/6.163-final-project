@@ -7,11 +7,12 @@ infile = sys.argv[1]
 diameter = int(sys.argv[2]) if len(sys.argv) >= 3 else 8
 # DPI of the printer, 600 x 600 for HP 9050 (MITPRINT)
 dpi = 600
+
 imwidth = diameter * dpi
 imheight = diameter * dpi
 centerCircle = Image.open("circle.png")
 centerCircle = centerCircle.resize((dpi, dpi), Image.ANTIALIAS)
-def processImage(infile):
+def processGIF(infile):
     images =[]
     try:
         img = Image.open(infile)
@@ -64,7 +65,7 @@ def createWheelIm(frames, imwidth, imheight):
         angle = x * 360.0/numFrames
         tempIm =frames[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS)
         copyAtAngle(out, tempIm, angle)
-    #Add a large square in the middle for easy centering
+    #Add a 1 inch circle in the middle for easy centering
 
     out.paste(centerCircle, (center[0] - dpi/2, center[1]-dpi/2))
     out.save(infile[:-4]+'_output.png')
@@ -113,4 +114,5 @@ def getMaxSizePerSector(radius, width, height, number):
     opposite = math.cos(angle)*radius
     ans = (2 * math.tan(angle) * opposite / dim) / (1 + (2*math.tan(angle)*dim/dim))
     return ans
-createWheelIm(processImage(infile), imwidth, imheight)
+
+createWheelIm(processGIF(infile), imwidth, imheight)
