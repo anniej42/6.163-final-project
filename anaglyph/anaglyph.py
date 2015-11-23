@@ -163,11 +163,11 @@ def main():
     # options, leftImage, rightImage, stereoPath = parse_arguments()
     options, leftImages, rightImages, filename = parse_arguments()
 
-    if not os.path.exists("output"):
-        os.makedirs("output")
+    if not os.path.exists(filename):
+        os.makedirs(filename)
 
     for i in xrange(len(leftImages)):
-        outputPath = "./output/" + filename+str(i)+".jpg";
+        outputPath = "./"+filename+"/" + filename+str(i)+".jpg";
         leftImage = leftImages[i]
         rightImage = rightImages[i]
         if options.type == 'anaglyph':
