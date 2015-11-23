@@ -5,6 +5,8 @@ import math
 infile = sys.argv[1]
 # Diameter of the wheel in inches
 diameter = int(sys.argv[2]) if len(sys.argv) >= 3 else 8
+# max frames
+maxFramesPerWheel = int(sys.argv[3]) if len(sys.argv) >= 4 else 15
 # DPI of the printer, 600 x 600 for HP 9050 (MITPRINT)
 dpi = 600
 
@@ -115,4 +117,8 @@ def getMaxSizePerSector(radius, width, height, number):
     ans = (2 * math.tan(angle) * opposite / dim) / (1 + (2*math.tan(angle)*dim/dim))
     return ans
 
-createWheelIm(processGIF(infile), imwidth, imheight)
+images = processGIF(infile)
+if len(images) > maxFramesPerWheel:
+    images = images[0:maxFramesPerWheel]
+# print len(images), maxFramesPerWheel
+createWheelIm(images, imwidth, imheight)
