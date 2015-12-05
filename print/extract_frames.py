@@ -39,7 +39,7 @@ def processGIF(infile):
 
         if dispose is None:
             prev.paste(frame, bbox, frame.convert('RGBA'))
-            #prev.save(infile[:-4]+'%02d.png' % i)
+            prev.save(infile[:-4]+'%02d.png' % i)
             prev_dispose = False
             images.append(prev.copy())
         else:
@@ -47,7 +47,7 @@ def processGIF(infile):
                 prev = Image.new('RGBA', img.size, (0, 0, 0, 0))
             out = prev.copy()
             out.paste(frame, bbox, frame.convert('RGBA'))
-            #out.save(infile[:-4]+'%02d.png' % i)
+            out.save(infile[:-4]+'%02d.png' % i)
             images.append(out.copy())
     # for x in xrange(len(images)):
     #     img = images[x]
@@ -67,6 +67,7 @@ def createWheelIm(frames, imwidth, imheight):
         angle = x * 360.0/numFrames
         tempIm =frames[x].resize((int(frameW), int(frameH)), Image.ANTIALIAS)
         copyAtAngle(out, tempIm, angle)
+        out.save(infile[:-4]+'%02d_output.png' % x)
     #Add a 1 inch circle in the middle for easy centering
 
     out.paste(centerCircle, (center[0] - dpi/2, center[1]-dpi/2))
@@ -79,7 +80,7 @@ def copyAtAngle(out, frame, angle):
     rotatedIm.paste(frame, (int((dim - frameW)/2), int((dim - frameH)/2)))
     rotatedIm=rotatedIm.rotate(-angle)
     #.paste(frame.rotate(-angle))#.transform((imwidth, imheight), Image.AFFINE, (cos(angle), sin(angle), 0, -sin(angle), cos(angle), 0))
-    #rotatedIm.save(infile[:-4]+str(angle)+'_rotated.png')
+    rotatedIm.save(infile[:-4]+str(angle)+'_rotated.png')
 
     # Figure out something with placement
     center=(out.size[0]/2, out.size[1]/2)
@@ -122,6 +123,10 @@ if len(images) > maxFramesPerWheel:
     images = images[0:maxFramesPerWheel]
 # print len(images), maxFramesPerWheel
 
+# newImages = []
+# for x in xrange(len(images)):
+# 	if x%2 == 0:
+# 		newImages.append(images[x])
 createWheelIm(images, imwidth, imheight)
 
 print 'Num Frames:', len(images)
