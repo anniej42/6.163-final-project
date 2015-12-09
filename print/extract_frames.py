@@ -1,3 +1,18 @@
+'''
+Running the code: 
+python extract_frames.py [GIF FILE NAME] [-opt_wheel diameter in inches] [-opt_frameCutoff] [-opt_printerDPI]
+
+EXAMPLE:
+python extract_frames.py circles.gif 8 4 100
+
+PARAMETERS:
+GIF Filename: Tested and works with .gif, potentially works with .gifv or .jpg animations, but untested
+Wheel Diameter: Any number > 0, specified in inches, to work with DPI.
+Frame Cutoff: An integer >=3, restricts number of frames placed around the wheel. Use in case you have a really long gif that you only want the beginning of.
+Printer DPI: Helpful if you know the DPI to create the correctly sized image to print, if unknown, pick a relatively large one and the printer can probably just scale it down automatically
+
+Note you must have the previous paramters specified, ie if you only want to specify DPI, you must specify diameter and frame cutoff first. Future work includes making better command line options
+'''
 import Image, ImageSequence
 import sys, os
 import math
@@ -8,7 +23,7 @@ diameter = int(sys.argv[2]) if len(sys.argv) >= 3 else 8
 # max frames
 maxFramesPerWheel = int(sys.argv[3]) if len(sys.argv) >= 4 else 100000
 # DPI of the printer, 600 x 600 for HP 9050 (MITPRINT)
-dpi = 600
+dpi = int(sys.argv[4]) if len(sys.argv) >= 5 else 600
 
 imwidth = diameter * dpi
 imheight = diameter * dpi
